@@ -1,4 +1,4 @@
-package br.com.b2w.consumer;
+package com.uol.consumer;
 
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -14,7 +14,7 @@ public class EndpointConsumer {
 
 	public String getItemsByEndpoint() {
 		RestTemplate template = new RestTemplate();
-		return template.getForObject("http://www.mocky.io/v2/5817803a1000007d01cc7fc9", String.class);
+		return template.getForObject("https://ipvigilante.com/", String.class);
 	}
 
 }
