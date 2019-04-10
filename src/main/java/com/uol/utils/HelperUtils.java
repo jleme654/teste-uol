@@ -1,4 +1,4 @@
-package br.com.b2w.utils;
+package com.uol.utils;
 
 import java.util.Date;
 import java.text.ParseException;

@@ -16,8 +16,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.google.gson.Gson;
 import com.uol.consumer.EndpointConsumer;
 
-import br.com.b2w.utils.HelperUtils;
-import br.com.b2w.vo.ItemVO;
 
 /**
  * 
