@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.google.gson.Gson;
 import com.uol.consumer.EndpointConsumer;
+import com.uol.model.ArrayConsolidatedVO;
 import com.uol.model.ConsolidatedcWeatherVO;
 import com.uol.model.IpVigilanteVO;
 import com.uol.model.LocationVO;
@@ -57,8 +58,8 @@ public ResponseEntity<ResultClienteVO> getItemsByRangeDatas() {//@RequestParam("
 		
         String jsonTemperature = this.serviceApp.getTemperatureByWoeid(idWoeid);
         Gson gsonTemperature = new Gson();
-		ConsolidatedcWeatherVO[] arrayTemperature = gsonTemperature.fromJson(jsonTemperature, ConsolidatedcWeatherVO[].class);
-		ConsolidatedcWeatherVO consolidate = arrayTemperature[0];
+		ArrayConsolidatedVO arrayTemperature = gsonTemperature.fromJson(jsonTemperature, ArrayConsolidatedVO.class);
+		ConsolidatedcWeatherVO consolidate = arrayTemperature.getConsolidated_weather();
 		
 		ResultClienteVO resultCliente = new ResultClienteVO();
 		resultCliente.setId(ipvigilante.getData().getIpv4());
