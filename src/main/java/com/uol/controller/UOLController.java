@@ -1,20 +1,19 @@
 package com.uol.controller;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
 import java.util.logging.Logger;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.google.gson.Gson;
 import com.uol.consumer.EndpointConsumer;
+import com.uol.model.ConsolidatedcWeatherVO;
+import com.uol.model.IpVigilanteVO;
+import com.uol.model.LocationVO;
+import com.uol.model.ResultClienteVO;
 
 
 /**
@@ -37,34 +36,38 @@ public class UOLController {
 		return "Greetings from Spring Boot!";
 	}
 	
-//	@RequestMapping("/teste-uol/item")
-//	public ResponseEntity<List<ItemVO>> getItemsByRangeDatas(@RequestParam("begindate") String begindate,
-//			                       @RequestParam("finaldate") String finaldate) {
-//		logger.info("--- B2W SOLUCAO CHALLENGE BACKEND ---");
-//		
-//		String jsonString = this.serviceApp.getItemsByEndpoint();
-//		
-//		Gson gson = new Gson();
-//		ItemVO[] itemsoriginal = gson.fromJson(jsonString, ItemVO[].class);
-//		List<ItemVO> listaItemsOriginals = Arrays.asList(itemsoriginal);
-//		List<ItemVO> listaitemnovo = new ArrayList<>();
-//		//logger.info("--- LISTA ITEMS ORIGINAL: " + listaItemsOriginals);
-//		
-//		Date databegin = HelperUtils.convertStringtoDate(begindate);
-//		Date datafinal = HelperUtils.convertStringtoDate(finaldate);
-//		
-//		//logger.info("--- datas: databegin: "+databegin + " datafinal: " + datafinal );
-//		for (ItemVO item : listaItemsOriginals) {
-//			String dataitem = item.getDate();
-//			//logger.info("--- datas: dataitem: " + dataitem);
-//			dataitem = HelperUtils.treatmentDate(dataitem);
-//			Date dataitemconvert = HelperUtils.convertStringtoDate(dataitem);
-//			if(dataitemconvert.after(databegin) && dataitemconvert.before(datafinal))
-//				listaitemnovo.add(item);
-//		}
-//		//logger.info("--- lista result: " + listaitemnovo.toString());
-//		HttpStatus status = HttpStatus.ACCEPTED;
-//		return new ResponseEntity<List<ItemVO>>(listaitemnovo, status);
-//	}
+@RequestMapping("/teste-uol/executa")
+public ResponseEntity<ResultClienteVO> getItemsByRangeDatas() {//@RequestParam("latt") String latt,
+			                       //@RequestParam("long") String long) {
+		logger.info("--- uol - solucao teste ---");
+		
+		String jsonString = this.serviceApp.getItemsByEndpoint();
+		
+		Gson gson = new Gson();
+		IpVigilanteVO ipvigilante = gson.fromJson(jsonString, IpVigilanteVO.class);
+		double latitude = ipvigilante.getData().getLatitude();
+		double longitude = ipvigilante.getData().getLongitude();
+		
+		String jsonStringLocation = this.serviceApp.getLocationByParams(latitude, longitude);
+		Gson gsonLocation = new Gson();
+		LocationVO[] arrayLocation = gsonLocation.fromJson(jsonStringLocation, LocationVO[].class);//json, classOfT) Arrays.asList(itemsoriginal);
+        LocationVO location = arrayLocation[0];
+        
+        long idWoeid = location.getWoeid();
+		
+        String jsonTemperature = this.serviceApp.getTemperatureByWoeid(idWoeid);
+        Gson gsonTemperature = new Gson();
+		ConsolidatedcWeatherVO[] arrayTemperature = gsonTemperature.fromJson(jsonTemperature, ConsolidatedcWeatherVO[].class);
+		ConsolidatedcWeatherVO consolidate = arrayTemperature[0];
+		
+		ResultClienteVO resultCliente = new ResultClienteVO();
+		resultCliente.setId(ipvigilante.getData().getIpv4());
+		resultCliente.setTempMax(consolidate.getMax_temp());
+		resultCliente.setTempMin(consolidate.getMin_temp());
+	
+		logger.info("--- cliente result: " + resultCliente.toString());
+		HttpStatus status = HttpStatus.ACCEPTED;
+		return new ResponseEntity<ResultClienteVO>(resultCliente, status);
+	}
 	
 }
