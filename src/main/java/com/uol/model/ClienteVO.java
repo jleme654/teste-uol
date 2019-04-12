@@ -16,23 +16,60 @@ public class ClienteVO implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	private Long id;
 	private String nome;
 	private Integer idade;
+	// apos execução das regras de negocio
+	private String ipOrigem;
+	private String geoLocalizacao;
+	private String dataCadastro;
+	private Double tempMax;
+	private Double tempMin;
 
 	/**
 	 * getters and setters
 	 */
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
 	public String getNome() {
 		return nome;
+	}
+
+	public Double getTempMax() {
+		return tempMax;
+	}
+
+	public void setTempMax(Double tempMax) {
+		this.tempMax = tempMax;
+	}
+
+	public Double getTempMin() {
+		return tempMin;
+	}
+
+	public void setTempMin(Double tempMin) {
+		this.tempMin = tempMin;
+	}
+
+	public String getIpOrigem() {
+		return ipOrigem;
+	}
+
+	public void setIpOrigem(String ipOrigem) {
+		this.ipOrigem = ipOrigem;
+	}
+
+	public String getGeoLocalizacao() {
+		return geoLocalizacao;
+	}
+
+	public void setGeoLocalizacao(String geoLocalizacao) {
+		this.geoLocalizacao = geoLocalizacao;
+	}
+
+	public String getDataCadastro() {
+		return dataCadastro;
+	}
+
+	public void setDataCadastro(String dataCadastro) {
+		this.dataCadastro = dataCadastro;
 	}
 
 	public void setNome(String nome) {

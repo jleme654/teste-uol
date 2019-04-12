@@ -1,10 +1,8 @@
-package com.uol.model;
+/*package com.uol.model;
 
 public class ResultClienteVO {
 
-	/**
-	 *  O ID DO CLIENTE É O PROPRIO IP DE QUEM CADASTROU 
-	 */
+	// *  O ID DO CLIENTE É O PROPRIO IP DE QUEM CADASTROU 
 	private String id;
 	private String nome;
 	private double tempMin;
@@ -43,3 +41,4 @@ public class ResultClienteVO {
 	}
 
 }
+*/
