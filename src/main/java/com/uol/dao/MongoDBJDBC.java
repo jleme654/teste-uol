@@ -1,10 +1,13 @@
 package com.uol.dao;
 
+import org.springframework.stereotype.Service;
+
 import com.mongodb.BasicDBObject;
 import com.mongodb.MongoClient;
 import com.mongodb.client.MongoDatabase;
 import com.uol.model.ClienteVO;
 
+@Service
 public class MongoDBJDBC {
 	public static void main(String args[]) {
 		try {
@@ -30,4 +33,6 @@ public class MongoDBJDBC {
 		pessoa.put("tempMax", cliente.getTempMax());
 		pessoa.put("dataCadastro", cliente.getDataCadastro());
 	}
+	
+	
 }

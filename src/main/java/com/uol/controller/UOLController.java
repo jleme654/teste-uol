@@ -5,14 +5,10 @@ import java.util.logging.Logger;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.google.gson.Gson;
@@ -40,6 +36,7 @@ public class UOLController {
 	@Autowired
 	EndpointConsumer serviceApp;
 
+	@Autowired
 	MongoDBJDBC mongoJdbc;
 	
 	@RequestMapping("/teste-uol")
@@ -100,7 +97,7 @@ public class UOLController {
 		resultCliente.setTempMin(consolidate.getMin_temp());
 		resultCliente.setNome("");
 		resultCliente.setIdade(0);
-		logger.info("--- step 4: cliente result: " + resultCliente.toString());
+		logger.info("--- step 4 complete: client result: " + resultCliente.toString());
 		
 		return resultCliente;
 	}
@@ -114,18 +111,21 @@ public class UOLController {
 	    return new ResponseEntity<>(new Bazz("5", name), HttpStatus.OK);
 	}*/
 	
-	@RequestMapping(method = RequestMethod.POST, value="/teste-uol/save/{nome}/{idade}",consumes=MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> saveData(@PathVariable String nome, @PathVariable String idade) {
-		logger.info("[--- uol - metodo save ---]");
+	@RequestMapping(method = RequestMethod.POST, value="/teste-uol/save/{nome}/{idade}")
+    public ResponseEntity<String> saveData(@PathVariable("nome") String nome, 
+    		                               @PathVariable("idade") String idade) {
+		logger.info("--- uol - metodo save ---");
 		ClienteVO clienteExecuta = getTemperatureGeoCliente();
 		
 		ClienteVO clientFinal = new ClienteVO();
 		clientFinal.setDataCadastro(HelperUtils.convertDateToString(new Date()));
+		clientFinal.setNome(nome);
 		clientFinal.setIdade(Integer.parseInt(idade));
 		clientFinal.setIpOrigem(clienteExecuta.getIpOrigem());
 		clientFinal.setGeoLocalizacao(clienteExecuta.getGeoLocalizacao());
 		clientFinal.setTempMax(clienteExecuta.getTempMax());
 		clientFinal.setTempMin(clienteExecuta.getTempMin());
+		logger.info("--- uol - client: nome = " +clientFinal.getNome() + ", idade =  " + clientFinal.getIdade() + " ---");
 		
 		this.mongoJdbc.save(clientFinal);
 		//this.serviceApp.saveConta();
