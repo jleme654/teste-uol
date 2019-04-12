@@ -1,16 +1,21 @@
 package com.uol.dao;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
+import org.w3c.dom.Document;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 import com.mongodb.MongoClient;
+import com.mongodb.client.MongoCursor;
 import com.uol.model.ClienteVO;
 
 @Service
@@ -46,20 +51,31 @@ public class MongoDBJDBC {
 	public List<ClienteVO> getAllClients() {
 		List<ClienteVO> lsClients = new ArrayList<>();
 		DBCollection coll = db.getCollection(name_collection);
-		DBCursor cursor = ((DBCollection) coll).find();
+	//	DBCursor cursor = ((DBCollection) coll).find();
+		Iterator<DBObject> cursor = coll.find().iterator();
 		int i = 1;
 		while (cursor.hasNext()) {
+			BasicDBObject obj = (BasicDBObject) cursor.next(); 
+			if (null == obj)
+				break;
 			System.out.println("Documento inserido: " + i);
-			System.out.println(cursor.next());
+			
+			//System.out.println(cursor.next());
+			String jsonString = obj.toString();
+			JsonObject convertStr = new Gson().fromJson(jsonString, JsonObject.class);
+			
+			Gson gson = new Gson();
+			ClienteVO vo = gson.fromJson(convertStr, ClienteVO.class);
+			if(vo.getNome() != null)
+				lsClients.add(vo);
 			i++;
 		}
+		System.out.println("--- lista de cliente db mongo: " + lsClients);
 		return lsClients;
 	}
 
 
 	public void save(ClienteVO cliente) {
-//		BasicDBObject doc = new BasicDBObject("title", "MongoDB").append("description", "database").append("likes", 100)
-//				.append("url", "http://www.tutorialspoint.com/mongodb/").append("by", "tutorials point");
 		DBCollection coll = db.getCollection(name_collection);
 		BasicDBObject pessoa = new BasicDBObject();
 		pessoa.put("nome", cliente.getNome());
@@ -88,10 +104,11 @@ public class MongoDBJDBC {
 		try {
             MongoDBJDBC mongojdbc = new MongoDBJDBC();
 			// teste para salvar cliente
-			mongojdbc.save(getClienteTeste());
-//			System.out.println("save ok");
+			//mongojdbc.save(getClienteTeste());
 
-		new MongoDBJDBC().getAllClients();
+            //System.out.println("save ok");
+
+		    mongojdbc.getAllClients();
 
 		} catch (Exception e) {
 			System.err.println(e.getClass().getName() + ": " + e.getMessage());

@@ -1,6 +1,5 @@
 package com.uol.utils;
 
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -28,8 +27,8 @@ public class HelperUtils {
 	public static String convertDateToString(Date dataStr) {
 		String todayAsString = null;
 		try {
-			String pattern = "dd-MM-yyyy HH:mm:ss";
-			DateFormat df = new SimpleDateFormat(pattern);
+			String pattern = "yyyy-MM-dd HH:mm:ss";
+			SimpleDateFormat df = new SimpleDateFormat(pattern);
 			todayAsString = df.format(dataStr);
 		} catch (Exception e) {
 			e.printStackTrace();

@@ -24,6 +24,8 @@ public class ClienteVO implements Serializable {
 	private String dataCadastro;
 	private Double tempMax;
 	private Double tempMin;
+	// for objects mongoDB
+	private IdMongoDB _id;
 
 	/**
 	 * getters and setters

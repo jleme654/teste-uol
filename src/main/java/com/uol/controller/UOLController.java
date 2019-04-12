@@ -130,8 +130,9 @@ public class UOLController {
 	 */
 	@RequestMapping(value = "/teste-uol/allclients", method = RequestMethod.GET)
 	public ResponseEntity<List<ClienteVO>> getAllClients() {
-		logger.info("[--- metodo listar todos os clientes cadastrados ---]");
+		logger.info("--- metodo listar todos os clientes cadastrados ---");
 		List<ClienteVO> body = this.mongoJdbc.getAllClients();
+		logger.info("--- uol - lista: " + body.toString() + " ---");
 		HttpStatus status = HttpStatus.ACCEPTED;
 		return new ResponseEntity<List<ClienteVO>>(body, status);
 	}
