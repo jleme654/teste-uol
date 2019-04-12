@@ -1,6 +1,7 @@
 package com.uol.dao;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.springframework.stereotype.Service;
 
@@ -42,8 +43,8 @@ public class MongoDBJDBC {
 		return true;
 	}
 
-	public ArrayList<ClienteVO> getAllClients() {
-		ArrayList<ClienteVO> lsClients = new ArrayList<>();
+	public List<ClienteVO> getAllClients() {
+		List<ClienteVO> lsClients = new ArrayList<>();
 		DBCollection coll = db.getCollection(name_collection);
 		DBCursor cursor = ((DBCollection) coll).find();
 		int i = 1;
