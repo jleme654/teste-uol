@@ -1,6 +1,7 @@
 package com.uol.controller;
 
 import java.util.Date;
+import java.util.List;
 import java.util.logging.Logger;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,8 +46,7 @@ public class UOLController {
 	}
 
 	@RequestMapping("/teste-uol/executa")
-	public ResponseEntity<ClienteVO> getTemperatureDay() {// @RequestParam("latt") String latt,
-		// @RequestParam("long") String long) {
+	public ResponseEntity<ClienteVO> getTemperatureDay() {// @RequestParam("latt") String latt,	// @RequestParam("long") String long) {
 		logger.info("--- uol - solucao teste ---");
 	
 		HttpStatus status = HttpStatus.ACCEPTED;
@@ -67,8 +67,7 @@ public class UOLController {
 		 */
 		String jsonStringLocation = this.serviceApp.getLocationByParams(latitude, longitude);
 		Gson gsonLocation = new Gson();
-		LocationVO[] arrayLocation = gsonLocation.fromJson(jsonStringLocation, LocationVO[].class);// json, classOfT)
-																									// Arrays.asList(itemsoriginal);
+		LocationVO[] arrayLocation = gsonLocation.fromJson(jsonStringLocation, LocationVO[].class);
 		LocationVO location = arrayLocation[0];
 		long idWoeid = location.getWoeid();
 		logger.info("--- step 2 complete: location result: " + ipvigilante.toString());
@@ -105,12 +104,6 @@ public class UOLController {
 	/**
 	 * CRUD - POST (salvar)
 	 */
-	
-	/*@PostMapping
-	public ResponseEntity<?> newBazz(@RequestParam("nome") String nome){
-	    return new ResponseEntity<>(new Bazz("5", name), HttpStatus.OK);
-	}*/
-	
 	@RequestMapping(method = RequestMethod.POST, value="/teste-uol/save/{nome}/{idade}")
     public ResponseEntity<String> saveData(@PathVariable("nome") String nome, 
     		                               @PathVariable("idade") String idade) {
@@ -131,6 +124,25 @@ public class UOLController {
 		//this.serviceApp.saveConta();
         return ResponseEntity.ok("save ok!");
     }
+
+	/**
+	 * CRUD - GET (get all clients)
+	 */
+	@RequestMapping(value = "/teste-uol/allclients", method = RequestMethod.GET)
+	public ResponseEntity<List<ClienteVO>> getAllClients() {
+		logger.info("[--- metodo listar todos os clientes cadastrados ---]");
+		List<ClienteVO> body = this.mongoJdbc.getAllClients();
+		HttpStatus status = HttpStatus.ACCEPTED;
+		return new ResponseEntity<List<ClienteVO>>(body, status);
+	}
+	
+//	@RequestMapping(value = "/teste_ucb/alljuridicas", method = RequestMethod.GET)
+//	public ResponseEntity<List<PessoaJuridica>> listarPjuridicas() {
+//		LOG.info("[--- metodo listar pessoas juridicas ---]");
+//		List<PessoaJuridica> body = this.personDAO.getAllPJuridicas();// HelperUtils.getAllContas();
+//		HttpStatus status = HttpStatus.ACCEPTED;
+//		return new ResponseEntity<List<PessoaJuridica>>(body, status);
+//	}
 	
 	
 //	@RequestMapping(method = RequestMethod.PUT, value="/teste_ucb/update",consumes=MediaType.APPLICATION_JSON_VALUE)

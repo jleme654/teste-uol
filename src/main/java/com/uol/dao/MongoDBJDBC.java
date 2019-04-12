@@ -57,6 +57,8 @@ public class MongoDBJDBC {
 
 
 	public void save(ClienteVO cliente) {
+//		BasicDBObject doc = new BasicDBObject("title", "MongoDB").append("description", "database").append("likes", 100)
+//				.append("url", "http://www.tutorialspoint.com/mongodb/").append("by", "tutorials point");
 		DBCollection coll = db.getCollection(name_collection);
 		BasicDBObject pessoa = new BasicDBObject();
 		pessoa.put("nome", cliente.getNome());
@@ -66,29 +68,26 @@ public class MongoDBJDBC {
 		pessoa.put("tempMin", cliente.getTempMin());
 		pessoa.put("tempMax", cliente.getTempMax());
 		pessoa.put("dataCadastro", cliente.getDataCadastro());
-
-//		BasicDBObject doc = new BasicDBObject("title", "MongoDB").append("description", "database").append("likes", 100)
-//				.append("url", "http://www.tutorialspoint.com/mongodb/").append("by", "tutorials point");
 		coll.insert(pessoa);//doc
 	}
 	
 	static ClienteVO getClienteTeste() {
 		ClienteVO cliente = new ClienteVO();
 		cliente.setDataCadastro("10-04-2019");
-		cliente.setGeoLocalizacao("Sao Paulo");
+		cliente.setGeoLocalizacao("Diadema");
 		cliente.setIdade(45);
-		cliente.setIpOrigem("145.852.969.414");
-		cliente.setNome("julio teste");
-		cliente.setTempMax(25.0);
-		cliente.setTempMin(28.0);
+		cliente.setIpOrigem("888.777.966.555");
+		cliente.setNome("arlete teste");
+		cliente.setTempMax(18.0);
+		cliente.setTempMin(19.0);
 		return cliente;
 	}
 
 	public static void main(String args[]) {
 		try {
-
+            MongoDBJDBC mongojdbc = new MongoDBJDBC();
 			// teste para salvar cliente
-//			new MongoDBJDBC().save(getClienteTeste());
+			mongojdbc.save(getClienteTeste());
 //			System.out.println("save ok");
 
 		new MongoDBJDBC().getAllClients();
