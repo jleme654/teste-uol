@@ -1,30 +1,64 @@
 package com.uol.dao;
 
+import java.util.ArrayList;
+
 import org.springframework.stereotype.Service;
 
 import com.mongodb.BasicDBObject;
+import com.mongodb.DB;
+import com.mongodb.DBCollection;
+import com.mongodb.DBCursor;
+import com.mongodb.DBObject;
 import com.mongodb.MongoClient;
-import com.mongodb.client.MongoDatabase;
 import com.uol.model.ClienteVO;
 
 @Service
 public class MongoDBJDBC {
-	public static void main(String args[]) {
-		try {
-			// Conectando ao servidor mongodb
-			MongoClient mongoClient = new MongoClient("localhost", 27017);
-			// Conecta ao banco de dados test
-			MongoDatabase db = mongoClient.getDatabase("test");
-			System.out.println("Banco de dados conectado com sucesso");
-//			boolean auth = db. //("julio", "master");
-//			System.out.println("Autenticacao: " + auth);
-		} catch (Exception e) {
-			System.err.println(e.getClass().getName() + ": " + e.getMessage());
-		}
+
+	private static DB db;
+	static String name_collection = "collection-clients";
+	static String dbMongo;
+	static DBObject coll;
+
+	public MongoDBJDBC() {
+		createDB();
+		createCollection(name_collection);
 	}
-	
+
+	static void createDB() {
+		MongoClient mongoClient = new MongoClient("localhost", 27017);
+		dbMongo = "db-collection-clients";
+		db = mongoClient.getDB(dbMongo);
+		System.out.println("Banco de dados [" + dbMongo + "] conectado com sucesso");
+	}
+
+	static boolean createCollection(String namecoll) {
+		boolean existsCollection = db.collectionExists(namecoll);
+		if (!existsCollection) {
+			db.getCollection(namecoll);
+			return true;
+		}
+		System.out.println("collection [" + dbMongo + "] conectado com sucesso");
+		return true;
+	}
+
+	public ArrayList<ClienteVO> getAllClients() {
+		ArrayList<ClienteVO> lsClients = new ArrayList<>();
+		DBCollection coll = db.getCollection(name_collection);
+		DBCursor cursor = ((DBCollection) coll).find();
+		int i = 1;
+		while (cursor.hasNext()) {
+			System.out.println("Documento inserido: " + i);
+			System.out.println(cursor.next());
+			i++;
+		}
+		return lsClients;
+	}
+
+
 	public void save(ClienteVO cliente) {
-		BasicDBObject pessoa= new BasicDBObject();
+		DBCollection coll = db.getCollection(name_collection);
+		BasicDBObject pessoa = new BasicDBObject();
 		pessoa.put("nome", cliente.getNome());
 		pessoa.put("idade", cliente.getIdade());
 		pessoa.put("ipOrigem", cliente.getIpOrigem());
@@ -32,7 +66,35 @@ public class MongoDBJDBC {
 		pessoa.put("tempMin", cliente.getTempMin());
 		pessoa.put("tempMax", cliente.getTempMax());
 		pessoa.put("dataCadastro", cliente.getDataCadastro());
+
+//		BasicDBObject doc = new BasicDBObject("title", "MongoDB").append("description", "database").append("likes", 100)
+//				.append("url", "http://www.tutorialspoint.com/mongodb/").append("by", "tutorials point");
+		coll.insert(pessoa);//doc
 	}
 	
-	
+	static ClienteVO getClienteTeste() {
+		ClienteVO cliente = new ClienteVO();
+		cliente.setDataCadastro("10-04-2019");
+		cliente.setGeoLocalizacao("Sao Paulo");
+		cliente.setIdade(45);
+		cliente.setIpOrigem("145.852.969.414");
+		cliente.setNome("julio teste");
+		cliente.setTempMax(25.0);
+		cliente.setTempMin(28.0);
+		return cliente;
+	}
+
+	public static void main(String args[]) {
+		try {
+
+			// teste para salvar cliente
+//			new MongoDBJDBC().save(getClienteTeste());
+//			System.out.println("save ok");
+
+		new MongoDBJDBC().getAllClients();
+
+		} catch (Exception e) {
+			System.err.println(e.getClass().getName() + ": " + e.getMessage());
+		}
+	}
 }
