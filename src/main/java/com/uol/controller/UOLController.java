@@ -101,9 +101,7 @@ public class UOLController {
 		return resultCliente;
 	}
 	
-	/**
-	 * CRUD - POST (salvar)
-	 */
+	//CRUD - POST (salvar)
 	@RequestMapping(method = RequestMethod.POST, value="/teste-uol/save/{nome}/{idade}")
     public ResponseEntity<String> saveData(@PathVariable("nome") String nome, 
     		                               @PathVariable("idade") String idade) {
@@ -118,16 +116,35 @@ public class UOLController {
 		clientFinal.setGeoLocalizacao(clienteExecuta.getGeoLocalizacao());
 		clientFinal.setTempMax(clienteExecuta.getTempMax());
 		clientFinal.setTempMin(clienteExecuta.getTempMin());
-		logger.info("--- uol - client: nome = " +clientFinal.getNome() + ", idade =  " + clientFinal.getIdade() + " ---");
+		logger.info("--- uol - save client: nome = " +clientFinal.getNome() + ", idade =  " + clientFinal.getIdade() + " ---");
 		
 		this.mongoJdbc.save(clientFinal);
 		//this.serviceApp.saveConta();
         return ResponseEntity.ok("save ok!");
     }
+	
+	//CRUD - PUT (update)
+	@RequestMapping(method = RequestMethod.PUT, value="/teste-uol/save/{nome}/{idade}")
+	public ResponseEntity<String> upateData(@PathVariable("nome") String nome, 
+	   		                                @PathVariable("idade") String idade) {
+		logger.info("--- uol - metodo save ---");
+		ClienteVO clienteExecuta = getTemperatureGeoCliente();
+			
+		ClienteVO clientFinal = new ClienteVO();
+		clientFinal.setDataCadastro(HelperUtils.convertDateToString(new Date()));
+		clientFinal.setNome(nome);
+		clientFinal.setIdade(Integer.parseInt(idade));
+		clientFinal.setIpOrigem(clienteExecuta.getIpOrigem());
+		clientFinal.setGeoLocalizacao(clienteExecuta.getGeoLocalizacao());
+		clientFinal.setTempMax(clienteExecuta.getTempMax());
+		clientFinal.setTempMin(clienteExecuta.getTempMin());
+		logger.info("--- uol - update client: nome = " +clientFinal.getNome() + ", idade =  " + clientFinal.getIdade() + " ---");
+			
+		this.mongoJdbc.update(clientFinal);
+	    return ResponseEntity.ok("update ok!");
+	}
 
-	/**
-	 * CRUD - GET (get all clients)
-	 */
+    // CRUD - GET (get all clients)
 	@RequestMapping(value = "/teste-uol/allclients", method = RequestMethod.GET)
 	public ResponseEntity<List<ClienteVO>> getAllClients() {
 		logger.info("--- metodo listar todos os clientes cadastrados ---");
@@ -137,49 +154,22 @@ public class UOLController {
 		return new ResponseEntity<List<ClienteVO>>(body, status);
 	}
 	
-//	@RequestMapping(value = "/teste_ucb/alljuridicas", method = RequestMethod.GET)
-//	public ResponseEntity<List<PessoaJuridica>> listarPjuridicas() {
-//		LOG.info("[--- metodo listar pessoas juridicas ---]");
-//		List<PessoaJuridica> body = this.personDAO.getAllPJuridicas();// HelperUtils.getAllContas();
-//		HttpStatus status = HttpStatus.ACCEPTED;
-//		return new ResponseEntity<List<PessoaJuridica>>(body, status);
-//	}
+	// GET  by ID(get clients by id)
+	@RequestMapping(value = "/teste-uol/getclient/{id}", method = RequestMethod.GET)
+	public ResponseEntity<ClienteVO>  getClientById(@PathVariable Long id) {
+		logger.info("--- metodo listar todos os clientes cadastrados ---");
+		ClienteVO body = this.mongoJdbc.getClientById(String.valueOf(id));
+		logger.info("--- uol - lista: " + body.toString() + " ---");
+		HttpStatus status = HttpStatus.ACCEPTED;
+		return new ResponseEntity<ClienteVO>(body, status);
+	}
 	
-	
-//	@RequestMapping(method = RequestMethod.PUT, value="/teste_ucb/update",consumes=MediaType.APPLICATION_JSON_VALUE)
-//    public ResponseEntity<String> updateData(@RequestBody ContaVO conta) {
-//		LOG.info("[--- metodo update ---]");
-//		this.serviceApp.updateConta();
-//        return ResponseEntity.ok("update ok!");
-//    }
-//	
-//	@DeleteMapping(value = "/teste_ucb/delete/{id}")
-//	public void delete(@PathVariable("id") Long id) {
-//		LOG.info("[--- metodo delete ---]");
-//		this.serviceApp.deleteConta(id);
-//	}
-//	
-//	@GetMapping("/teste_ucb/get/{id}")
-//	public ContaVO getContaById(@PathVariable Long id) {
-//		LOG.info("[--- metodo get by id ---]");
-//		return this.serviceApp.findById(id);
-//			//.orElseThrow(() -> new EmployeeNotFoundException(id));
-//	}
-//
-//	@RequestMapping(value = "/teste_ucb/allcontas", method = RequestMethod.GET)
-//	public ResponseEntity<List<ContaVO>> listar() {
-//		LOG.info("[--- metodo listar ---]");
-//		List<ContaVO> body = this.serviceApp.getAllContas();// HelperUtils.getAllContas();
-//		HttpStatus status = HttpStatus.ACCEPTED;;
-//		return new ResponseEntity<List<ContaVO>>(body, status);
-//	}
-//	
-//	@RequestMapping(value = "/teste_ucb/alljuridicas", method = RequestMethod.GET)
-//	public ResponseEntity<List<PessoaJuridica>> listarPjuridicas() {
-//		LOG.info("[--- metodo listar pessoas juridicas ---]");
-//		List<PessoaJuridica> body = this.personDAO.getAllPJuridicas();// HelperUtils.getAllContas();
-//		HttpStatus status = HttpStatus.ACCEPTED;
-//		return new ResponseEntity<List<PessoaJuridica>>(body, status);
-//	}
+	// DELETE  by ID(get clients by id)
+	@RequestMapping(value = "/teste-uol/delete/{id}", method = RequestMethod.DELETE)
+	public ResponseEntity<String>  deleteClientById(@PathVariable Long id) {
+		logger.info("--- metodo deletar cliente by id ---");
+		this.mongoJdbc.deleteClientById(id);
+		return ResponseEntity.ok("delete ok!");
+	}	
 
 }

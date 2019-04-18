@@ -5,19 +5,23 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
-import org.w3c.dom.Document;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
-import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 import com.mongodb.MongoClient;
-import com.mongodb.client.MongoCursor;
 import com.uol.model.ClienteVO;
 
+/**
+ * 
+ * @author julio
+ * @since 2019-04-10
+ * @version 1.0.0
+ * 
+ */
 @Service
 public class MongoDBJDBC {
 
@@ -48,6 +52,7 @@ public class MongoDBJDBC {
 		return true;
 	}
 
+	//  get all clients mongo DB
 	public List<ClienteVO> getAllClients() {
 		List<ClienteVO> lsClients = new ArrayList<>();
 		DBCollection coll = db.getCollection(name_collection);
@@ -74,7 +79,7 @@ public class MongoDBJDBC {
 		return lsClients;
 	}
 
-
+	// save client mongo DB
 	public void save(ClienteVO cliente) {
 		DBCollection coll = db.getCollection(name_collection);
 		BasicDBObject pessoa = new BasicDBObject();
@@ -88,6 +93,50 @@ public class MongoDBJDBC {
 		coll.insert(pessoa);//doc
 	}
 	
+	// retorna o objeto MongoDB por consulta de id - ipOrigem
+	private DBObject getDBObjectClientById(String ipOrigem) {
+		DBCollection coll = db.getCollection(name_collection);
+		DBObject cliente = coll.findOne(ipOrigem);
+		return cliente;
+	}
+	
+	// update client mongoDB
+	public void update(ClienteVO cliente) {
+		DBCollection coll = db.getCollection(name_collection);
+		BasicDBObject update = new BasicDBObject();
+		update.put("nome", cliente.getNome());
+		update.put("idade", cliente.getIdade());
+		update.put("ipOrigem", cliente.getIpOrigem());
+		update.put("geoLocalizacao", cliente.getGeoLocalizacao());
+		update.put("tempMin", cliente.getTempMin());
+		update.put("tempMax", cliente.getTempMax());
+		update.put("dataCadastro", cliente.getDataCadastro());
+		DBObject query = getDBObjectClientById(cliente.getIpOrigem());
+		coll.update(query, update);//doc
+	}
+	
+	// get client java
+	public ClienteVO getClientById(String ipOrigem) {
+		ClienteVO vo = new ClienteVO();
+		DBObject obj = getDBObjectClientById(ipOrigem);
+		vo.setDataCadastro(obj.get("dataCadastro").toString());
+		vo.setGeoLocalizacao(obj.get("geoLocalizacao").toString());
+		vo.setIdade(null);
+		vo.setIpOrigem(ipOrigem);
+		vo.setNome(obj.get("nome").toString());
+		vo.setTempMax(Double.parseDouble(obj.get("tempMax").toString()));
+		vo.setTempMin(Double.parseDouble(obj.get("tempMin").toString()));
+		return vo;		
+	}
+	
+    // delete client mongo DB
+	public void deleteClientById(Long id) {
+		DBCollection coll = db.getCollection(name_collection);
+		DBObject obj = getDBObjectClientById(String.valueOf(id));
+		coll.dropIndex(obj);
+	}
+
+	// TESTES DE DEV
 	static ClienteVO getClienteTeste() {
 		ClienteVO cliente = new ClienteVO();
 		cliente.setDataCadastro("10-04-2019");
@@ -114,4 +163,5 @@ public class MongoDBJDBC {
 			System.err.println(e.getClass().getName() + ": " + e.getMessage());
 		}
 	}
+	
 }
